@@ -17,5 +17,6 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
     implementation("org.springframework.boot:spring-boot-starter-web:2.6.3")
+    implementation("org.springframework.boot:spring-boot-starter-mustache:2.6.3")
     implementation("org.springframework.fu:spring-fu-kofu:0.5.0")
 }
