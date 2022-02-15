@@ -9,7 +9,7 @@ data class Article<out T : Entity<User>>(
     val title: String,
     val headline: String,
     val content: String,
-    val userFn: () -> T,
+    private val userFn: () -> T,
     val slug: String = title.toSlug(),
     val addedAt: LocalDateTime = LocalDateTime.now().withNano(0)
 ){

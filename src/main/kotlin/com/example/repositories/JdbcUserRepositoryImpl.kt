@@ -34,7 +34,9 @@ class JdbcUserRepositoryImpl(dataSource: DataSource) : UserRepository {
                     .let { id -> Entity.Existing(Id(id.toInt()), user.info) }
             }
             is Entity.Existing -> jdbcTemplate
-                .update("update user set login=:login, firstname=:firstname, lastname=:lastname", parameters)
+                .update(
+                    "update user set login=:login, firstname=:firstname, lastname=:lastname where id=:id",
+                    parameters.toMutableMap().also { it["id"] = "${user.id.value}" })
                 .let { user }
         }
     }
