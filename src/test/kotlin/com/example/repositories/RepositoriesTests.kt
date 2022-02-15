@@ -1,6 +1,7 @@
 package com.example.repositories
 
 import com.example.model.Entity
+import com.example.model.Id
 import com.example.model.user.Login
 import com.example.model.user.UserInfo
 import io.kotest.matchers.shouldBe
@@ -12,17 +13,22 @@ class RepositoriesTests {
     private val dataSource: DataSource = JdbcTestsHelper.getDataSource()
 
     private val jdbcTemplate = JdbcTemplate(dataSource)
-    private val repoHelper = JdbcTestsHelper(jdbcTemplate)
+    private val repoHelper = JdbcTestsHelper(dataSource)
+    private lateinit var articleId: Number
+    private lateinit var userId: Number
 
     @BeforeEach
-    internal fun setUpAll() {
+    internal fun setUp() {
         repoHelper.createUserTable()
         repoHelper.createArticleTable()
-        repoHelper.insertArticle(JdbcTestsHelper.article1)
+        repoHelper.insertArticle(JdbcTestsHelper.article1).let { (user, article) ->
+            userId = user
+            articleId = article
+        }
     }
 
     @AfterEach
-    internal fun tearDownAll() {
+    internal fun tearDown() {
         repoHelper.dropArticleTable()
         repoHelper.dropUserTable()
     }
@@ -32,6 +38,22 @@ class RepositoriesTests {
         val userRepository = JdbcUserRepositoryImpl(dataSource)
         val user = userRepository.findByLogin(JdbcTestsHelper.luca.login)
         user?.info shouldBe JdbcTestsHelper.luca
+    }
+
+    @Test
+    fun `When findByIdOrNull then return User`() {
+        val userRepository = JdbcUserRepositoryImpl(dataSource)
+        val user = userRepository.findByIdOrNull(Id(userId.toInt()))
+        user?.info shouldBe JdbcTestsHelper.luca
+    }
+
+    @Test
+    fun `When findByIdOrNull then return Article`() {
+        val articleRepository = JdbcArticleRepositoryImpl(dataSource)
+        val found = articleRepository.findByIdOrNull(Id(articleId.toInt()))
+
+        found?.info?.title shouldBe JdbcTestsHelper.article1.title
+        found?.info?.addedAt shouldBe JdbcTestsHelper.article1.addedAt
     }
 
     @Test
@@ -70,4 +92,3 @@ class RepositoriesTests {
             .query("select * from user where id=${updatedUser.id.value}") { rs, _ -> rs.getString("login") }
             .firstOrNull()
 }
-

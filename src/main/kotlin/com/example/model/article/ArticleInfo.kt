@@ -11,5 +11,5 @@ data class ArticleInfo<out T : Entity<UserInfo>>(
     val content: String,
     val user: T,
     val slug: String = title.toSlug(),
-    val generatedAt: LocalDateTime = LocalDateTime.now()
+    val addedAt: LocalDateTime = LocalDateTime.now().withNano(0)
 )

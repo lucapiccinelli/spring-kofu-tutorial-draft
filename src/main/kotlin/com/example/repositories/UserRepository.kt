@@ -8,4 +8,5 @@ import com.example.model.user.UserInfo
 interface UserRepository {
     fun findByLogin(login: Login): Entity.Existing<UserInfo>?
     fun save(user: Entity<UserInfo>): Entity.Existing<UserInfo>
+    fun findByIdOrNull(id: Id<Int>): Entity.Existing<UserInfo>?
 }

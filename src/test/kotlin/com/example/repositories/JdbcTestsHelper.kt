@@ -8,7 +8,7 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert
 import javax.sql.DataSource
 
-class JdbcTestsHelper(private val jdbcTemplate: JdbcTemplate) {
+class JdbcTestsHelper(private val dataSource: DataSource) {
     companion object{
         fun getDataSource(): DataSource =
             DataSourceBuilder.create()
@@ -24,11 +24,13 @@ class JdbcTestsHelper(private val jdbcTemplate: JdbcTemplate) {
             Entity.New(luca))
     }
 
-    private val insertUser = SimpleJdbcInsert(jdbcTemplate.dataSource!!)
+    private val jdbcTemplate = JdbcTemplate(dataSource)
+
+    private val insertUser = SimpleJdbcInsert(dataSource)
         .withTableName("user")
         .usingGeneratedKeyColumns("id")
 
-    private val insertArticle = SimpleJdbcInsert(jdbcTemplate.dataSource!!)
+    private val insertArticle = SimpleJdbcInsert(dataSource)
         .withTableName("article")
         .usingGeneratedKeyColumns("id")
 
@@ -38,15 +40,15 @@ class JdbcTestsHelper(private val jdbcTemplate: JdbcTemplate) {
         "lastname" to user.name.lastname)
     )
 
-    fun insertArticle(article: ArticleInfo<Entity.New<UserInfo>>): Number {
+    fun insertArticle(article: ArticleInfo<Entity.New<UserInfo>>): Pair<Number, Number> {
         val userId = insertUser(article.user.info)
 
-        return insertArticle.executeAndReturnKey(mapOf(
+        return userId to insertArticle.executeAndReturnKey(mapOf(
             "title" to article.title,
             "headline" to article.headline,
             "content" to article.content,
             "slug" to article.slug,
-            "added_at" to article.generatedAt,
+            "added_at" to article.addedAt,
             "user_id" to userId)
         )
     }
