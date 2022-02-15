@@ -3,7 +3,7 @@ package com.example.repositories
 import com.example.model.Entity
 import com.example.model.Id
 import com.example.model.user.Login
-import com.example.model.user.UserInfo
+import com.example.model.user.User
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert
 import java.sql.ResultSet
@@ -16,10 +16,10 @@ class JdbcUserRepositoryImpl(dataSource: DataSource) : UserRepository {
         .withTableName("user")
         .usingGeneratedKeyColumns("id")
 
-    override fun findByLogin(login: Login): Entity.Existing<UserInfo>? = firstOrNull("login", login.value)
-    override fun findByIdOrNull(id: Id<Int>): Entity.Existing<UserInfo>? = firstOrNull("id", id.value)
+    override fun findByLogin(login: Login): Entity.Existing<User>? = firstOrNull("login", login.value)
+    override fun findByIdOrNull(id: Id<Int>): Entity.Existing<User>? = firstOrNull("id", id.value)
 
-    override fun save(user: Entity<UserInfo>): Entity.Existing<UserInfo> {
+    override fun save(user: Entity<User>): Entity.Existing<User> {
         val parameters = with(user.info) {
             mapOf(
                 "login" to login.value,
@@ -47,7 +47,7 @@ class JdbcUserRepositoryImpl(dataSource: DataSource) : UserRepository {
 
     private fun toUser(rs: ResultSet) = Entity.Existing(
         Id(rs.getInt("id")),
-        UserInfo.of(
+        User.of(
             rs.getString("login"),
             rs.getString("firstname"),
             rs.getString("lastname")

@@ -3,7 +3,7 @@ package com.example.repositories
 import com.example.model.Entity
 import com.example.model.Id
 import com.example.model.user.Login
-import com.example.model.user.UserInfo
+import com.example.model.user.User
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.*
 import org.springframework.jdbc.core.JdbcTemplate
@@ -88,7 +88,7 @@ class RepositoriesTests {
         login shouldBe updatedUser.info.login.value
     }
 
-    private fun getLoginById(updatedUser: Entity.Existing<UserInfo>) =
+    private fun getLoginById(updatedUser: Entity.Existing<User>) =
         jdbcTemplate
             .query("select * from user where id=${updatedUser.id.value}") { rs, _ -> rs.getString("login") }
             .firstOrNull()

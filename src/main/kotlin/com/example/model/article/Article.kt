@@ -1,11 +1,11 @@
 package com.example.model.article
 
 import com.example.model.Entity
-import com.example.model.user.UserInfo
+import com.example.model.user.User
 import com.example.toSlug
 import java.time.LocalDateTime
 
-data class ArticleInfo<out T : Entity<UserInfo>>(
+data class Article<out T : Entity<User>>(
     val title: String,
     val headline: String,
     val content: String,

@@ -1,8 +1,8 @@
 package com.example.repositories
 
 import com.example.model.Entity
-import com.example.model.article.ArticleInfo
-import com.example.model.user.UserInfo
+import com.example.model.article.Article
+import com.example.model.user.User
 import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert
@@ -16,8 +16,8 @@ class JdbcTestsHelper(private val dataSource: DataSource) {
                 .url("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE")
                 .build()
 
-        val luca = UserInfo.of("springluca", "Luca", "Piccinelli")
-        val article1 = ArticleInfo(
+        val luca = User.of("springluca", "Luca", "Piccinelli")
+        val article1 = Article(
             "Spring Kotlin DSL is amazing",
             "Dear Spring community ...",
             "Lorem ipsum",
@@ -34,13 +34,13 @@ class JdbcTestsHelper(private val dataSource: DataSource) {
         .withTableName("article")
         .usingGeneratedKeyColumns("id")
 
-    private fun insertUser(user: UserInfo): Number = insertUser.executeAndReturnKey(mapOf(
+    private fun insertUser(user: User): Number = insertUser.executeAndReturnKey(mapOf(
         "login" to user.login.value,
         "firstname" to user.name.firstname,
         "lastname" to user.name.lastname)
     )
 
-    fun insertArticle(article: ArticleInfo<Entity.New<UserInfo>>): Pair<Number, Number> {
+    fun insertArticle(article: Article<Entity.New<User>>): Pair<Number, Number> {
         val userId = insertUser(article.user.info)
 
         return userId to insertArticle.executeAndReturnKey(mapOf(

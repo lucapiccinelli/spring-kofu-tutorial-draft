@@ -2,7 +2,7 @@ package com.example.model.user
 
 import com.example.model.Name
 
-data class UserInfo(
+data class User(
     val login: Login,
     val name: Name,
     val description: String? = null){
@@ -13,7 +13,7 @@ data class UserInfo(
             firstname: String,
             lastname: String,
             description: String? = null) =
-            UserInfo(Login(login), Name(firstname, lastname), description)
+            User(Login(login), Name(firstname, lastname), description)
     }
 }
 
