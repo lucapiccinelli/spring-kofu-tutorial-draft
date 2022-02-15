@@ -30,14 +30,22 @@ class JdbcUserRepositoryImpl(dataSource: DataSource) : UserRepository {
     .firstOrNull()
 
     override fun save(user: Entity<UserInfo>): Entity.Existing<UserInfo> {
-        val id = with(user.info){
-            insertUser.execute(mapOf(
+        val parameters = with(user.info) {
+            mapOf(
                 "login" to login.value,
                 "firstname" to name.firstname,
-                "lastname" to name.lastname)
+                "lastname" to name.lastname
             )
         }
-
-        return Entity.Existing(Id(id), user.info)
+        return when(user){
+            is Entity.New ->{
+                insertUser
+                    .executeAndReturnKey(parameters)
+                    .let { id -> Entity.Existing(Id(id.toInt()), user.info) }
+            }
+            is Entity.Existing -> jdbcTemplate
+                .update("update user set login=:login, firstname=:firstname, lastname=:lastname", parameters)
+                .let { user }
+        }
     }
 }

@@ -32,29 +32,28 @@ class JdbcTestsHelper(private val jdbcTemplate: JdbcTemplate) {
         .withTableName("article")
         .usingGeneratedKeyColumns("id")
 
-    private fun insertUser(user: UserInfo): Int = insertUser.execute(mapOf(
+    private fun insertUser(user: UserInfo): Number = insertUser.executeAndReturnKey(mapOf(
         "login" to user.login.value,
         "firstname" to user.name.firstname,
         "lastname" to user.name.lastname)
     )
 
-    fun insertArticle(article: ArticleInfo<Entity.New<UserInfo>>): Int {
+    fun insertArticle(article: ArticleInfo<Entity.New<UserInfo>>): Number {
         val userId = insertUser(article.user.info)
 
-        return insertArticle.execute(mapOf(
+        return insertArticle.executeAndReturnKey(mapOf(
             "title" to article.title,
             "headline" to article.headline,
             "content" to article.content,
             "slug" to article.slug,
             "added_at" to article.generatedAt,
-            "user_id" to userId
-        )
+            "user_id" to userId)
         )
     }
 
     fun createUserTable() {
         jdbcTemplate.execute(
-            """create table user(
+            """create table if not exists user(
                     |id IDENTITY PRIMARY KEY, 
                     |login VARCHAR NOT NULL,
                     |firstname VARCHAR NOT NULL,
@@ -66,7 +65,7 @@ class JdbcTestsHelper(private val jdbcTemplate: JdbcTemplate) {
 
     fun createArticleTable() {
         jdbcTemplate.execute(
-            """create table article(
+            """create table if not exists article(
                     |id IDENTITY PRIMARY KEY, 
                     |title VARCHAR NOT NULL,
                     |headline VARCHAR NOT NULL,
