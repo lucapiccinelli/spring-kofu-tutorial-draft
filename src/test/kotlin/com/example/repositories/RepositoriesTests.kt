@@ -48,6 +48,13 @@ class RepositoriesTests {
     }
 
     @Test
+    fun `When findAllByOrderByAddedAtDesc then return a list of Articles ordered by date`() {
+        val articleRepository = JdbcArticleRepositoryImpl(dataSource)
+        val articles = articleRepository.findAllByOrderByAddedAtDesc()
+        articles.map { it.info.title } shouldBe listOf(JdbcTestsHelper.article1.title)
+    }
+
+    @Test
     fun `When findByIdOrNull then return Article`() {
         val articleRepository = JdbcArticleRepositoryImpl(dataSource)
         val found = articleRepository.findByIdOrNull(Id(articleId.toInt()))

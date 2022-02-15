@@ -5,6 +5,9 @@ import com.example.model.Id
 import com.example.model.article.Article
 import com.example.model.user.User
 
+typealias ArticleEntity = Entity.Existing<Article<Entity.Existing<User>>>
+
 interface ArticleRepository{
-    fun findByIdOrNull(id: Id<Int>): Entity.Existing<Article<Entity.Existing<User>>>?
+    fun findByIdOrNull(id: Id<Int>): ArticleEntity?
+    fun findAllByOrderByAddedAtDesc(): Collection<ArticleEntity>
 }
