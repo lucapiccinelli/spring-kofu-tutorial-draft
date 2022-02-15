@@ -9,5 +9,6 @@ typealias ArticleEntity = Entity.Existing<Article<Entity.Existing<User>>>
 
 interface ArticleRepository{
     fun findByIdOrNull(id: Id<Int>): ArticleEntity?
+    fun findBySlug(slug: String): ArticleEntity?
     fun findAllByOrderByAddedAtDesc(): Collection<ArticleEntity>
 }
