@@ -24,6 +24,7 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
     implementation("org.springframework.boot:spring-boot-starter-web:$springVersion")
+    implementation("org.springframework.boot:spring-boot-starter-jdbc:$springVersion")
     implementation("org.springframework.boot:spring-boot-starter-mustache:$springVersion")
     implementation("org.springframework.fu:spring-fu-kofu:0.5.0")
 
@@ -32,4 +33,5 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:$junitVersion"))
     testImplementation("org.junit.jupiter:junit-jupiter:$junitVersion")
     testImplementation("io.kotest:kotest-assertions-core-jvm:$kotestVersion")
+    testImplementation("com.h2database:h2:1.4.200")
 }
