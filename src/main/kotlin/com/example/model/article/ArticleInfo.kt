@@ -9,7 +9,9 @@ data class ArticleInfo<out T : Entity<UserInfo>>(
     val title: String,
     val headline: String,
     val content: String,
-    val user: T,
+    val userFn: () -> T,
     val slug: String = title.toSlug(),
     val addedAt: LocalDateTime = LocalDateTime.now().withNano(0)
-)
+){
+    val user by lazy(userFn)
+}

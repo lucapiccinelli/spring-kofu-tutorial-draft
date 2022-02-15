@@ -21,7 +21,7 @@ class JdbcTestsHelper(private val dataSource: DataSource) {
             "Spring Kotlin DSL is amazing",
             "Dear Spring community ...",
             "Lorem ipsum",
-            Entity.New(luca))
+            { Entity.New(luca) })
     }
 
     private val jdbcTemplate = JdbcTemplate(dataSource)

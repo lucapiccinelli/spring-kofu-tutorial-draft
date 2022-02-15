@@ -54,6 +54,7 @@ class RepositoriesTests {
 
         found?.info?.title shouldBe JdbcTestsHelper.article1.title
         found?.info?.addedAt shouldBe JdbcTestsHelper.article1.addedAt
+        found?.info?.user?.info?.login shouldBe JdbcTestsHelper.article1.user.info.login
     }
 
     @Test
