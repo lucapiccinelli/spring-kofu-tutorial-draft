@@ -3,6 +3,7 @@ package com.example.repositories
 import com.example.model.Entity
 import com.example.model.article.Article
 import com.example.model.user.User
+import com.example.utils.JdbcSchemaCreator
 import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert
@@ -25,6 +26,7 @@ class JdbcTestsHelper(private val dataSource: DataSource) {
     }
 
     private val jdbcTemplate = JdbcTemplate(dataSource)
+    private val jdbcSchemaCreator = JdbcSchemaCreator(dataSource)
 
     private val insertUser = SimpleJdbcInsert(dataSource)
         .withTableName("user")
@@ -53,32 +55,9 @@ class JdbcTestsHelper(private val dataSource: DataSource) {
         )
     }
 
-    fun createUserTable() {
-        jdbcTemplate.execute(
-            """create table if not exists user(
-                    |id IDENTITY PRIMARY KEY, 
-                    |login VARCHAR NOT NULL,
-                    |firstname VARCHAR NOT NULL,
-                    |lastname VARCHAR NOT NULL,
-                    |description VARCHAR
-                |)""".trimMargin()
-        )
-    }
+    fun createUserTable() = jdbcSchemaCreator.createUserTable()
 
-    fun createArticleTable() {
-        jdbcTemplate.execute(
-            """create table if not exists article(
-                    |id IDENTITY PRIMARY KEY, 
-                    |title VARCHAR NOT NULL,
-                    |headline VARCHAR NOT NULL,
-                    |content VARCHAR NOT NULL,
-                    |slug VARCHAR NOT NULL,
-                    |added_at DATETIME,
-                    |user_id INT NOT NULL,
-                    |constraint FK_USER foreign key (user_id) references user(id)
-                |)""".trimMargin()
-        )
-    }
+    fun createArticleTable() = jdbcSchemaCreator.createArticleTable()
 
     fun dropUserTable(){
         jdbcTemplate.execute("drop table user")

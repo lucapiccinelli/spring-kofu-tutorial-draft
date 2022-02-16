@@ -7,6 +7,7 @@ import com.example.model.user.User
 import com.example.repositories.*
 import com.example.routes.blog
 import com.example.routes.blogPersistence
+import com.example.utils.JdbcSchemaCreator
 import org.springframework.boot.ApplicationRunner
 import org.springframework.fu.kofu.configuration
 import org.springframework.fu.kofu.jdbc.DataSourceType
@@ -35,6 +36,16 @@ val app = webApplication {
     enable(h2)
     enable(blog)
     enable(blogPersistence)
+    beans {
+        bean {
+            ApplicationRunner {
+                JdbcSchemaCreator(ref()).apply {
+                    createUserTable()
+                    createArticleTable()
+                }
+            }
+        }
+    }
     profile("dev"){
         beans {
             bean {
