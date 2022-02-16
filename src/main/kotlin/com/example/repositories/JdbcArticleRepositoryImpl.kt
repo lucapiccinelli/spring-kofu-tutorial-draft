@@ -39,6 +39,7 @@ class JdbcArticleRepositoryImpl(dataSource: DataSource) : ArticleRepository {
                 "slug" to slug,
                 "added_at" to addedAt,
                 "content" to content,
+                "user_id" to user.id.value,
             )
         }
 
@@ -53,9 +54,10 @@ class JdbcArticleRepositoryImpl(dataSource: DataSource) : ArticleRepository {
                     """update article set
                         |title=:title, 
                         |headline=:headline, 
-                        |slug=:slug 
-                        |added_at=:added_at 
-                        |content=:content 
+                        |slug=:slug,
+                        |added_at=:added_at, 
+                        |content=:content,
+                        |user_id=:user_id
                         |where id=:id""".trimMargin(),
                     parameters.toMutableMap<String, Any>().also { it["id"] = "${article.id.value}" })
                 .let { Entity.Existing(article.id, article.info.withUser(user)) }
