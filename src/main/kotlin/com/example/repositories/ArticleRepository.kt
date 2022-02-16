@@ -11,5 +11,5 @@ interface ArticleRepository{
     fun findByIdOrNull(id: Id<Int>): ArticleEntity?
     fun findBySlug(slug: String): ArticleEntity?
     fun findAllByOrderByAddedAtDesc(): Collection<ArticleEntity>
-    fun save(articleEntity: Entity<Article<Entity<User>>>): ArticleEntity
+    fun save(article: Entity<Article<Entity<User>>>): ArticleEntity
 }

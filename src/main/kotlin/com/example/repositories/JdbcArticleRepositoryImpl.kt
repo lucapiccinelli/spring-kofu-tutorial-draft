@@ -7,10 +7,16 @@ import com.example.model.user.User
 import org.springframework.dao.DataRetrievalFailureException
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert
+import org.springframework.jdbc.support.JdbcTransactionManager
+import org.springframework.transaction.PlatformTransactionManager
+import org.springframework.transaction.TransactionDefinition
+import org.springframework.transaction.TransactionManager
+import org.springframework.transaction.support.TransactionTemplate
 import java.sql.ResultSet
 import javax.sql.DataSource
 
 class JdbcArticleRepositoryImpl(dataSource: DataSource) : ArticleRepository {
+    private val transactionTemplate = TransactionTemplate(JdbcTransactionManager(dataSource))
     private val jdbcTemplate = NamedParameterJdbcTemplate(dataSource)
     private val userRepository = JdbcUserRepositoryImpl(dataSource)
 
@@ -26,7 +32,7 @@ class JdbcArticleRepositoryImpl(dataSource: DataSource) : ArticleRepository {
             toArticle(rs)
         }
 
-    override fun save(article: Entity<Article<Entity<User>>>): ArticleEntity {
+    override fun save(article: Entity<Article<Entity<User>>>): ArticleEntity = transactionTemplate.execute {
         val user: Entity.Existing<User> = when (val user = article.info.user) {
             is Entity.New -> userRepository.save(user)
             is Entity.Existing -> user
@@ -43,7 +49,7 @@ class JdbcArticleRepositoryImpl(dataSource: DataSource) : ArticleRepository {
             )
         }
 
-        return when (article) {
+        when (article) {
             is Entity.New -> {
                 insert
                     .executeAndReturnKey(parameters)
@@ -62,7 +68,7 @@ class JdbcArticleRepositoryImpl(dataSource: DataSource) : ArticleRepository {
                     parameters.toMutableMap<String, Any>().also { it["id"] = "${article.id.value}" })
                 .let { Entity.Existing(article.id, article.info.withUser(user)) }
         }
-    }
+    }!!
 
     private fun toArticle(rs: ResultSet): ArticleEntity {
         val userId: Int = rs.getInt("user_id")
