@@ -9,4 +9,5 @@ interface UserRepository {
     fun findByLogin(login: Login): Entity.Existing<User>?
     fun save(user: Entity<User>): Entity.Existing<User>
     fun findByIdOrNull(id: Id<Int>): Entity.Existing<User>?
+    fun findAll(): Collection<Entity.Existing<User>>
 }

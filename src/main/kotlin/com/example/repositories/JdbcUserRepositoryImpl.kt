@@ -18,6 +18,10 @@ class JdbcUserRepositoryImpl(dataSource: DataSource) : UserRepository {
 
     override fun findByLogin(login: Login): Entity.Existing<User>? = firstOrNull("login", login.value)
     override fun findByIdOrNull(id: Id<Int>): Entity.Existing<User>? = firstOrNull("id", id.value)
+    override fun findAll(): Collection<Entity.Existing<User>> = jdbcTemplate
+        .query("select * from user") { rs, _ ->
+            toUser(rs)
+        }
 
     override fun save(user: Entity<User>): Entity.Existing<User> {
         val parameters = with(user.info) {
