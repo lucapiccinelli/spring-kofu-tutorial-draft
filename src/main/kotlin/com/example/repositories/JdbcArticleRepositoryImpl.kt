@@ -8,9 +8,6 @@ import org.springframework.dao.DataRetrievalFailureException
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert
 import org.springframework.jdbc.support.JdbcTransactionManager
-import org.springframework.transaction.PlatformTransactionManager
-import org.springframework.transaction.TransactionDefinition
-import org.springframework.transaction.TransactionManager
 import org.springframework.transaction.support.TransactionTemplate
 import java.sql.ResultSet
 import javax.sql.DataSource
@@ -26,11 +23,11 @@ class JdbcArticleRepositoryImpl(dataSource: DataSource) : ArticleRepository {
 
     override fun findByIdOrNull(id: Id<Int>): ArticleEntity? = firstOrNull("id", id.value)
     override fun findBySlug(slug: String): ArticleEntity? = firstOrNull("slug", slug)
+    override fun findAll(): Collection<ArticleEntity> =
+        findAll("select * from article")
 
-    override fun findAllByOrderByAddedAtDesc(): Collection<ArticleEntity> = jdbcTemplate
-        .query("select * from article order by added_at desc") { rs, _ ->
-            toArticle(rs)
-        }
+    override fun findAllByOrderByAddedAtDesc(): Collection<ArticleEntity> =
+        findAll("select * from article order by added_at desc")
 
     override fun save(article: Entity<Article<Entity<User>>>): ArticleEntity = transactionTemplate.execute {
         val user: Entity.Existing<User> = when (val user = article.info.user) {
@@ -89,6 +86,9 @@ class JdbcArticleRepositoryImpl(dataSource: DataSource) : ArticleRepository {
             )
         )
     }
+
+    private fun findAll(query: String) =
+        jdbcTemplate.query(query) { rs, _ -> toArticle(rs) }
 
     private fun firstOrNull(parameterName: String, value: Any) = jdbcTemplate
         .query("select * from article where $parameterName=:$parameterName", mapOf(parameterName to value)) { rs, _ ->

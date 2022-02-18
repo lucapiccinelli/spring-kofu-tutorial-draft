@@ -1,28 +1,21 @@
 package com.example.routes
 
-import com.example.format
-import com.example.model.Entity
-import com.example.model.article.Article
 import com.example.model.user.User
 import com.example.repositories.ArticleRepository
 import com.example.repositories.JdbcArticleRepositoryImpl
 import com.example.repositories.JdbcUserRepositoryImpl
 import org.springframework.fu.kofu.configuration
-import org.springframework.http.HttpStatus
-import org.springframework.web.server.ResponseStatusException
+import org.springframework.fu.kofu.webmvc.webMvc
 import org.springframework.web.servlet.function.ServerRequest
 import org.springframework.web.servlet.function.ServerResponse
-import org.springframework.web.servlet.function.router
 
 val blog = configuration {
-    beans {
-        bean {
+    webMvc {
+        router {
             val htmlHandler = HtmlHandler(ref())
 
-            router {
-                GET("/", htmlHandler::blog)
-                GET("/article/{slug}", htmlHandler::article)
-            }
+            GET("/", htmlHandler::blog)
+            GET("/article/{slug}", htmlHandler::article)
         }
     }
 }
@@ -61,29 +54,4 @@ class HtmlHandler(private val articleRepository: ArticleRepository) {
             ?: ServerResponse.notFound().build()
     }
 }
-
-fun Article<Entity<User>>.render() = RenderedArticle(
-    slug,
-    title,
-    headline,
-    content,
-    user.info.render(),
-    addedAt.format()
-)
-
-fun User.render() = RenderedUser(login.value, name.firstname, name.lastname, description)
-
-data class RenderedArticle(
-    val slug: String,
-    val title: String,
-    val headline: String,
-    val content: String,
-    val user: RenderedUser,
-    val addedAt: String)
-
-data class RenderedUser(
-    val login: String,
-    val firstname: String,
-    val lastname: String,
-    val description: String?)
 

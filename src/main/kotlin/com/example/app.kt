@@ -5,16 +5,19 @@ import com.example.model.Id
 import com.example.model.article.Article
 import com.example.model.user.User
 import com.example.repositories.*
-import com.example.routes.blog
-import com.example.routes.blogPersistence
+import com.example.routes.*
 import com.example.utils.JdbcSchemaCreator
 import org.springframework.boot.ApplicationRunner
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.runApplication
 import org.springframework.fu.kofu.configuration
 import org.springframework.fu.kofu.jdbc.DataSourceType
 import org.springframework.fu.kofu.jdbc.jdbc
 import org.springframework.fu.kofu.templating.mustache
 import org.springframework.fu.kofu.webApplication
 import org.springframework.fu.kofu.webmvc.webMvc
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RestController
 
 val h2 = configuration {
     jdbc(DataSourceType.Hikari){
@@ -31,10 +34,20 @@ val mustache = configuration {
     }
 }
 
+val json = configuration {
+    webMvc {
+        converters{
+            jackson()
+        }
+    }
+}
+
 val app = webApplication {
     enable(mustache)
+    enable(json)
     enable(h2)
     enable(blog)
+    enable(api)
     enable(blogPersistence)
     beans {
         bean {

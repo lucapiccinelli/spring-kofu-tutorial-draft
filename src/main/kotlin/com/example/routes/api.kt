@@ -16,34 +16,39 @@ val api = configuration {
                 val userHandler = UserHandler(ref())
                 "/api".nest {
                     "/article".nest {
-                        GET("/", articleHandler::findAll)
+                        GET("", articleHandler::findAll)
                         GET("/{slug}", articleHandler::findOne)
                     }
                     "/user".nest {
-                        GET("/", userHandler::findAll)
+                        GET("", userHandler::findAll)
                         GET("/{login}", userHandler::findOne)
                     }
                 }
-
             }
         }
     }
 }
 
 class UserHandler(private val userRepository: UserRepository) {
-    fun findAll(serverRequest: ServerRequest): ServerResponse = userRepository.findAll().run(::ok)
+    fun findAll(serverRequest: ServerRequest): ServerResponse = userRepository.findAll()
+        .map { it.info.render() }
+        .run(::ok)
 
     fun findOne(serverRequest: ServerRequest): ServerResponse = userRepository
         .findByLogin(serverRequest.pathVariable("login").run(::Login))
+        ?.info?.render()
         ?.run(::ok)
         ?: ServerResponse.notFound().build()
 }
 
 class ArticleHandler(private val articleRepository: ArticleRepository) {
-    fun findAll(serverRequest: ServerRequest): ServerResponse = articleRepository.findAllByOrderByAddedAtDesc().run(::ok)
+    fun findAll(serverRequest: ServerRequest): ServerResponse = articleRepository.findAll()
+        .map { it.info.render() }
+        .run(::ok)
 
     fun findOne(serverRequest: ServerRequest): ServerResponse = articleRepository
         .findBySlug(serverRequest.pathVariable("slug"))
+        ?.info?.render()
         ?.run(::ok)
         ?: ServerResponse.notFound().build()
 }
