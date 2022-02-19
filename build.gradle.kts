@@ -10,7 +10,7 @@ val kotestVersion = "5.1.0"
 val junitVersion = "5.8.2"
 val springVersion = "2.6.3"
 val mockkVersion = "1.12.2"
-val jacksonVersion = "2.12.4"
+val jacksonVersion = "2.13.1"
 
 repositories {
     maven {
@@ -38,7 +38,6 @@ dependencies {
 
     testImplementation("org.springframework.boot:spring-boot-starter-test:$springVersion")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
-    testImplementation(platform("org.junit:junit-bom:$junitVersion"))
     testImplementation("org.junit.jupiter:junit-jupiter:$junitVersion")
     testImplementation("io.kotest:kotest-assertions-core-jvm:$kotestVersion")
     testImplementation("io.mockk:mockk:$mockkVersion")
