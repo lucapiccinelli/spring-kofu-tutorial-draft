@@ -3,12 +3,10 @@ package com.example
 import com.example.model.Entity
 import com.example.model.article.Article
 import com.example.model.user.User
-import com.example.properties.BlogProperties
 import com.example.properties.LiquibaseProperties
 import com.example.repositories.*
 import com.example.routes.*
 import liquibase.integration.spring.SpringLiquibase
-import org.springframework.boot.ApplicationRunner
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.fu.kofu.configuration
 import org.springframework.fu.kofu.jdbc.DataSourceType
@@ -58,10 +56,8 @@ val app = webApplication {
     enable(mustache)
     enable(json)
     enable(h2)
-    enable(blog)
-    enable(api)
-    enable(blogPersistence)
     enable(liquibase)
+    enable(blogModule)
     profile("dev"){
         listener<ApplicationReadyEvent> {
             val userRepository: UserRepository = ref()

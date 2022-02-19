@@ -1,6 +1,5 @@
 package com.example.routes
 
-import com.example.model.user.User
 import com.example.properties.BlogProperties
 import com.example.repositories.ArticleRepository
 import com.example.repositories.JdbcArticleRepositoryImpl
@@ -9,6 +8,12 @@ import org.springframework.fu.kofu.configuration
 import org.springframework.fu.kofu.webmvc.webMvc
 import org.springframework.web.servlet.function.ServerRequest
 import org.springframework.web.servlet.function.ServerResponse
+
+val blogModule = configuration {
+    enable(blog)
+    enable(blogPersistence)
+    enable(blogApi)
+}
 
 val blog = configuration {
     webMvc {

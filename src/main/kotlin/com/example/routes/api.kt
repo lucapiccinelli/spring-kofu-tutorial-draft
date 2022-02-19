@@ -8,7 +8,7 @@ import org.springframework.web.servlet.function.ServerRequest
 import org.springframework.web.servlet.function.ServerResponse
 import org.springframework.web.servlet.function.router
 
-val api = configuration {
+val blogApi = configuration {
     beans {
         bean {
             router {
