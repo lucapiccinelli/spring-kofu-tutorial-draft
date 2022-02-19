@@ -1,24 +1,20 @@
 package com.example
 
 import com.example.model.Entity
-import com.example.model.Id
 import com.example.model.article.Article
 import com.example.model.user.User
 import com.example.properties.BlogProperties
+import com.example.properties.LiquibaseProperties
 import com.example.repositories.*
 import com.example.routes.*
-import com.example.utils.JdbcSchemaCreator
+import liquibase.integration.spring.SpringLiquibase
 import org.springframework.boot.ApplicationRunner
-import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.runApplication
 import org.springframework.fu.kofu.configuration
 import org.springframework.fu.kofu.jdbc.DataSourceType
 import org.springframework.fu.kofu.jdbc.jdbc
 import org.springframework.fu.kofu.templating.mustache
 import org.springframework.fu.kofu.webApplication
 import org.springframework.fu.kofu.webmvc.webMvc
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RestController
 
 val h2 = configuration {
     jdbc(DataSourceType.Hikari){
@@ -43,6 +39,19 @@ val json = configuration {
     }
 }
 
+val liquibase = configuration {
+    beans {
+        bean {
+            val liquibaseProperties: LiquibaseProperties = ref()
+
+            SpringLiquibase().apply {
+                changeLog = liquibaseProperties.changelogPath
+                dataSource = ref()
+            }
+        }
+    }
+}
+
 val app = webApplication {
     enable(mustache)
     enable(json)
@@ -50,17 +59,9 @@ val app = webApplication {
     enable(blog)
     enable(api)
     enable(blogPersistence)
+    enable(liquibase)
     configurationProperties<BlogProperties>(prefix = "blog")
-    beans {
-        bean {
-            ApplicationRunner {
-                JdbcSchemaCreator(ref()).apply {
-                    createUserTable()
-                    createArticleTable()
-                }
-            }
-        }
-    }
+    configurationProperties<LiquibaseProperties>(prefix = "liquibase")
     profile("dev"){
         beans {
             bean {

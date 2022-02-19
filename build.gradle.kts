@@ -34,6 +34,7 @@ dependencies {
     implementation("org.springframework.fu:spring-fu-kofu:0.5.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
     implementation("com.h2database:h2:1.4.200")
+    implementation("org.liquibase:liquibase-core:4.7.1")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test:$springVersion")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")

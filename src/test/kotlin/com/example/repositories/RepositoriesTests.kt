@@ -5,7 +5,11 @@ import com.example.model.Id
 import com.example.model.user.Login
 import com.example.model.user.User
 import io.kotest.matchers.shouldBe
-import org.junit.jupiter.api.*
+import liquibase.Liquibase
+import liquibase.resource.ClassLoaderResourceAccessor
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcTemplate
 import javax.sql.DataSource
 
@@ -19,8 +23,12 @@ class RepositoriesTests {
 
     @BeforeEach
     internal fun setUp() {
-        repoHelper.createUserTable()
-        repoHelper.createArticleTable()
+        val liquibase = Liquibase(
+            "classpath:liquibase/changelog-master.xml",
+            ClassLoaderResourceAccessor(),
+            liquibase.database.jvm.JdbcConnection(dataSource.connection))
+        liquibase.update("")
+
         repoHelper.insertArticle(JdbcTestsHelper.article1).let { (user, article) ->
             userId = user
             articleId = article
@@ -29,6 +37,7 @@ class RepositoriesTests {
 
     @AfterEach
     internal fun tearDown() {
+        repoHelper.dropLiquibase()
         repoHelper.dropArticleTable()
         repoHelper.dropUserTable()
     }

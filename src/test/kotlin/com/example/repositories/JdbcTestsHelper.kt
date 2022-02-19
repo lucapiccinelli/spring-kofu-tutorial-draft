@@ -11,11 +11,14 @@ import javax.sql.DataSource
 
 class JdbcTestsHelper(private val dataSource: DataSource) {
     companion object{
-        fun getDataSource(): DataSource =
-            DataSourceBuilder.create()
+        val h2Url = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;"
+
+        fun getDataSource(): DataSource {
+            return DataSourceBuilder.create()
                 .driverClassName("org.h2.Driver")
-                .url("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE")
+                .url(h2Url)
                 .build()
+        }
 
         val luca = User.of("springluca", "Luca", "Piccinelli")
         val article1 = Article(
@@ -29,11 +32,11 @@ class JdbcTestsHelper(private val dataSource: DataSource) {
     private val jdbcSchemaCreator = JdbcSchemaCreator(dataSource)
 
     private val insertUser = SimpleJdbcInsert(dataSource)
-        .withTableName("user")
+        .withTableName("USER")
         .usingGeneratedKeyColumns("id")
 
     private val insertArticle = SimpleJdbcInsert(dataSource)
-        .withTableName("article")
+        .withTableName("ARTICLE")
         .usingGeneratedKeyColumns("id")
 
     private fun insertUser(user: User): Number = insertUser.executeAndReturnKey(mapOf(
@@ -59,11 +62,14 @@ class JdbcTestsHelper(private val dataSource: DataSource) {
 
     fun createArticleTable() = jdbcSchemaCreator.createArticleTable()
 
+    fun dropLiquibase(){
+        jdbcTemplate.execute("drop table DATABASECHANGELOG")
+    }
     fun dropUserTable(){
-        jdbcTemplate.execute("drop table user")
+        jdbcTemplate.execute("drop table USER")
     }
 
     fun dropArticleTable(){
-        jdbcTemplate.execute("drop table article")
+        jdbcTemplate.execute("drop table ARTICLE")
     }
 }
