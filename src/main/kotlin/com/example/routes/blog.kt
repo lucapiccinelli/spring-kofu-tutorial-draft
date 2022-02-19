@@ -1,6 +1,7 @@
 package com.example.routes
 
 import com.example.model.user.User
+import com.example.properties.BlogProperties
 import com.example.repositories.ArticleRepository
 import com.example.repositories.JdbcArticleRepositoryImpl
 import com.example.repositories.JdbcUserRepositoryImpl
@@ -12,7 +13,7 @@ import org.springframework.web.servlet.function.ServerResponse
 val blog = configuration {
     webMvc {
         router {
-            val htmlHandler = HtmlHandler(ref())
+            val htmlHandler = HtmlHandler(ref(), ref())
 
             GET("/", htmlHandler::blog)
             GET("/article/{slug}", htmlHandler::article)
@@ -29,11 +30,15 @@ val blogPersistence = configuration {
     }
 }
 
-class HtmlHandler(private val articleRepository: ArticleRepository) {
+class HtmlHandler(
+    private val blogProperties: BlogProperties,
+    private val articleRepository: ArticleRepository
+    ) {
     fun blog(request: ServerRequest): ServerResponse =
         ServerResponse.ok().render(
             "blog", mapOf(
-                "title" to "Blog",
+                "title" to blogProperties.title,
+                "banner" to blogProperties.banner,
                 "articles" to articleRepository.findAllByOrderByAddedAtDesc().map { it.info.render() }
             ),
         )

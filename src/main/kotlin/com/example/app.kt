@@ -4,6 +4,7 @@ import com.example.model.Entity
 import com.example.model.Id
 import com.example.model.article.Article
 import com.example.model.user.User
+import com.example.properties.BlogProperties
 import com.example.repositories.*
 import com.example.routes.*
 import com.example.utils.JdbcSchemaCreator
@@ -49,6 +50,7 @@ val app = webApplication {
     enable(blog)
     enable(api)
     enable(blogPersistence)
+    configurationProperties<BlogProperties>(prefix = "blog")
     beans {
         bean {
             ApplicationRunner {

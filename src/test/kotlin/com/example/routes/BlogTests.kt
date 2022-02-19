@@ -1,6 +1,8 @@
 package com.example.routes
 
 import com.example.mustache
+import com.example.properties.Banner
+import com.example.properties.BlogProperties
 import com.example.repositories.ArticleRepository
 import com.example.toSlug
 import io.mockk.every
@@ -35,6 +37,8 @@ class BlogTests {
                     every { findBySlug(articles.last().info.slug) } returns articles.last()
                 }
             }
+
+            bean { BlogProperties("Blog", Banner("bla", "bla")) }
         }
     }
 
