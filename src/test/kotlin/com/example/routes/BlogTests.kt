@@ -26,6 +26,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
+import javax.sql.DataSource
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BlogTests {
@@ -62,6 +63,8 @@ class BlogTests {
 
     @AfterAll
     internal fun tearDown() {
+        val dataSource = context.getBean(DataSource::class.java)
+        JdbcTestsHelper(dataSource).dropDb()
         context.close()
     }
 

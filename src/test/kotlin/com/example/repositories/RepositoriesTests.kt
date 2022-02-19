@@ -39,9 +39,7 @@ class RepositoriesTests {
 
     @AfterEach
     internal fun tearDown() {
-        repoHelper.dropLiquibase()
-        repoHelper.dropArticleTable()
-        repoHelper.dropUserTable()
+        repoHelper.dropDb()
     }
 
     @Test

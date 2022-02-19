@@ -16,6 +16,8 @@ class JdbcTestsHelper(private val dataSource: DataSource) {
         fun getDataSource(): DataSource {
             return DataSourceBuilder.create()
                 .driverClassName("org.h2.Driver")
+                .username("sa")
+                .password("")
                 .url(h2Url)
                 .build()
         }
@@ -62,14 +64,7 @@ class JdbcTestsHelper(private val dataSource: DataSource) {
 
     fun createArticleTable() = jdbcSchemaCreator.createArticleTable()
 
-    fun dropLiquibase(){
-        jdbcTemplate.execute("drop table DATABASECHANGELOG")
-    }
-    fun dropUserTable(){
-        jdbcTemplate.execute("drop table USER")
-    }
-
-    fun dropArticleTable(){
-        jdbcTemplate.execute("drop table ARTICLE")
+    fun dropDb(){
+        jdbcTemplate.execute("DROP ALL OBJECTS")
     }
 }
