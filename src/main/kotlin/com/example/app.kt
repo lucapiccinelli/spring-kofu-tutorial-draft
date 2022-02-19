@@ -9,6 +9,7 @@ import com.example.repositories.*
 import com.example.routes.*
 import liquibase.integration.spring.SpringLiquibase
 import org.springframework.boot.ApplicationRunner
+import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.fu.kofu.configuration
 import org.springframework.fu.kofu.jdbc.DataSourceType
 import org.springframework.fu.kofu.jdbc.jdbc
@@ -50,6 +51,7 @@ val liquibase = configuration {
             }
         }
     }
+    configurationProperties<LiquibaseProperties>(prefix = "liquibase")
 }
 
 val app = webApplication {
@@ -60,37 +62,31 @@ val app = webApplication {
     enable(api)
     enable(blogPersistence)
     enable(liquibase)
-    configurationProperties<BlogProperties>(prefix = "blog")
-    configurationProperties<LiquibaseProperties>(prefix = "liquibase")
     profile("dev"){
-        beans {
-            bean {
-                ApplicationRunner{
-                    val userRepository: UserRepository = ref()
-                    val articleRepository: ArticleRepository = ref()
-                    val luca = Entity.New(User.of("springluca", "Luca", "Piccinelli"))
+        listener<ApplicationReadyEvent> {
+            val userRepository: UserRepository = ref()
+            val articleRepository: ArticleRepository = ref()
+            val luca = Entity.New(User.of("springluca", "Luca", "Piccinelli"))
 
-                    val existingLuca = userRepository.save(luca)
-                    articleRepository.save(Entity.New(
-                        Article(
-                            title = "Reactor Bismuth is out",
-                            headline = "Lorem ipsum",
-                            content = "dolor sit amet",
-                            userFn = { existingLuca }
-                        )
-                    ))
-                    articleRepository.save(
-                        Entity.New(
-                            Article(
-                                title = "Reactor Aluminium has landed",
-                                headline = "Lorem ipsum",
-                                content = "dolor sit amet",
-                                userFn = { existingLuca }
-                            )
-                        )
+            val existingLuca = userRepository.save(luca)
+            articleRepository.save(Entity.New(
+                Article(
+                    title = "Reactor Bismuth is out",
+                    headline = "Lorem ipsum",
+                    content = "dolor sit amet",
+                    userFn = { existingLuca }
+                )
+            ))
+            articleRepository.save(
+                Entity.New(
+                    Article(
+                        title = "Reactor Aluminium has landed",
+                        headline = "Lorem ipsum",
+                        content = "dolor sit amet",
+                        userFn = { existingLuca }
                     )
-                }
-            }
+                )
+            )
         }
     }
 }

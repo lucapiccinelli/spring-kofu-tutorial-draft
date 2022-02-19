@@ -19,6 +19,7 @@ val blog = configuration {
             GET("/article/{slug}", htmlHandler::article)
         }
     }
+    configurationProperties<BlogProperties>(prefix = "blog")
 }
 
 val blogPersistence = configuration {

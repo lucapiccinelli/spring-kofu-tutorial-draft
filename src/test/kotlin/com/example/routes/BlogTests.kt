@@ -1,8 +1,14 @@
 package com.example.routes
 
+import com.example.h2
+import com.example.liquibase
+import com.example.model.Entity
 import com.example.mustache
 import com.example.properties.BlogProperties
+import com.example.properties.LiquibaseProperties
 import com.example.repositories.ArticleRepository
+import com.example.repositories.JdbcTestsHelper
+import com.example.repositories.UserRepository
 import com.example.toSlug
 import io.mockk.every
 import io.mockk.mockk
@@ -11,6 +17,7 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.fu.kofu.KofuApplication
 import org.springframework.fu.kofu.webApplication
@@ -29,16 +36,18 @@ class BlogTests {
     private val app: KofuApplication = webApplication {
         enable(mustache)
         enable(blog)
-        beans {
-            val articles = TestsEntitiesHelper.articles
-            bean {
-                mockk<ArticleRepository> {
-                    every { findAllByOrderByAddedAtDesc() } returns articles.sortedBy { it.info.addedAt }
-                    every { findBySlug(articles.last().info.slug) } returns articles.last()
-                }
-            }
+        enable(blogPersistence)
+        enable(liquibase)
+        enable(h2)
 
-            bean { BlogProperties("Blog", BlogProperties.Banner("bla", "bla")) }
+        listener<ApplicationReadyEvent> {
+            val articleRepository: ArticleRepository = ref()
+            val userRepository: UserRepository = ref()
+            val luca = userRepository.save(Entity.New(TestsEntitiesHelper.luca.info))
+
+            TestsEntitiesHelper.articles
+                .map { Entity.New(it.info.withUser(luca)) }
+                .forEach(articleRepository::save)
         }
         webMvc { port = RandomServerPort.value() }
     }
