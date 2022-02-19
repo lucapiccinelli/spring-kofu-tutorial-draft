@@ -31,24 +31,24 @@ val api = configuration {
 
 class UserHandler(private val userRepository: UserRepository) {
     fun findAll(serverRequest: ServerRequest): ServerResponse = userRepository.findAll()
-        .map { it.info.render() }
+        .map { it.render() }
         .run(::ok)
 
     fun findOne(serverRequest: ServerRequest): ServerResponse = userRepository
         .findByLogin(serverRequest.pathVariable("login").run(::Login))
-        ?.info?.render()
+        ?.render()
         ?.run(::ok)
         ?: ServerResponse.notFound().build()
 }
 
 class ArticleHandler(private val articleRepository: ArticleRepository) {
     fun findAll(serverRequest: ServerRequest): ServerResponse = articleRepository.findAll()
-        .map { it.info.render() }
+        .map { it.render() }
         .run(::ok)
 
     fun findOne(serverRequest: ServerRequest): ServerResponse = articleRepository
         .findBySlug(serverRequest.pathVariable("slug"))
-        ?.info?.render()
+        ?.render()
         ?.run(::ok)
         ?: ServerResponse.notFound().build()
 }

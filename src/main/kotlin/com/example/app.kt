@@ -70,13 +70,13 @@ val app = webApplication {
                     val articleRepository: ArticleRepository = ref()
                     val luca = Entity.New(User.of("springluca", "Luca", "Piccinelli"))
 
-                    userRepository.save(luca)
+                    val existingLuca = userRepository.save(luca)
                     articleRepository.save(Entity.New(
                         Article(
                             title = "Reactor Bismuth is out",
                             headline = "Lorem ipsum",
                             content = "dolor sit amet",
-                            userFn = { luca }
+                            userFn = { existingLuca }
                         )
                     ))
                     articleRepository.save(
@@ -85,7 +85,7 @@ val app = webApplication {
                                 title = "Reactor Aluminium has landed",
                                 headline = "Lorem ipsum",
                                 content = "dolor sit amet",
-                                userFn = { luca }
+                                userFn = { existingLuca }
                             )
                         )
                     )

@@ -39,14 +39,13 @@ class HtmlHandler(
             "blog", mapOf(
                 "title" to blogProperties.title,
                 "banner" to blogProperties.banner,
-                "articles" to articleRepository.findAllByOrderByAddedAtDesc().map { it.info.render() }
+                "articles" to articleRepository.findAllByOrderByAddedAtDesc().map { it.render() }
             ),
         )
 
     fun article(request: ServerRequest): ServerResponse {
         return articleRepository
             .findBySlug(request.pathVariable("slug"))
-            ?.info
             ?.render()
             ?.let { article ->
                 ServerResponse.ok().render(
