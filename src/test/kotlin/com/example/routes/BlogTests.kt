@@ -1,7 +1,6 @@
 package com.example.routes
 
 import com.example.mustache
-import com.example.properties.Banner
 import com.example.properties.BlogProperties
 import com.example.repositories.ArticleRepository
 import com.example.toSlug
@@ -38,7 +37,7 @@ class BlogTests {
                 }
             }
 
-            bean { BlogProperties("Blog", Banner("bla", "bla")) }
+            bean { BlogProperties("Blog", BlogProperties.Banner("bla", "bla")) }
         }
     }
 

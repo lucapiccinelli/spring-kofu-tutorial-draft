@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm") version "1.6.10"
+    kotlin("kapt") version "1.6.10"
 }
 
 group = "org.example"
@@ -23,6 +24,8 @@ tasks.withType<Test> {
 }
 
 dependencies {
+    kapt("org.springframework.boot:spring-boot-configuration-processor:$springVersion")
+
     implementation(kotlin("stdlib-jdk8"))
     implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
     implementation("org.springframework.boot:spring-boot-starter-web:$springVersion")
