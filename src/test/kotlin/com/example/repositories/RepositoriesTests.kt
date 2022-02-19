@@ -6,6 +6,7 @@ import com.example.model.user.Login
 import com.example.model.user.User
 import io.kotest.matchers.shouldBe
 import liquibase.Liquibase
+import liquibase.database.jvm.JdbcConnection
 import liquibase.resource.ClassLoaderResourceAccessor
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -26,7 +27,8 @@ class RepositoriesTests {
         val liquibase = Liquibase(
             "classpath:liquibase/changelog-master.xml",
             ClassLoaderResourceAccessor(),
-            liquibase.database.jvm.JdbcConnection(dataSource.connection))
+            JdbcConnection(dataSource.connection)
+        )
         liquibase.update("")
 
         repoHelper.insertArticle(JdbcTestsHelper.article1).let { (user, article) ->

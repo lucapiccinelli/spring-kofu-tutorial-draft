@@ -41,11 +41,12 @@ class ApiTests {
                 }
             }
         }
+        webMvc { port = RandomServerPort.value() }
     }
 
     @BeforeAll
     internal fun setUp() {
-        context = RandomServerPort.start(app)
+        context = app.run()
         client = MockMvcBuilders
             .webAppContextSetup(context as WebApplicationContext)
             .build()

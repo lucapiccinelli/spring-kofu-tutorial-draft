@@ -14,6 +14,7 @@ import org.junit.jupiter.api.TestInstance
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.fu.kofu.KofuApplication
 import org.springframework.fu.kofu.webApplication
+import org.springframework.fu.kofu.webmvc.webMvc
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
@@ -39,11 +40,12 @@ class BlogTests {
 
             bean { BlogProperties("Blog", BlogProperties.Banner("bla", "bla")) }
         }
+        webMvc { port = RandomServerPort.value() }
     }
 
     @BeforeAll
     internal fun setUp() {
-        context = RandomServerPort.start(app)
+        context = app.run()
         client = MockMvcBuilders
             .webAppContextSetup(context as WebApplicationContext)
             .build()
